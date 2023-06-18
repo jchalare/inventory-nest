@@ -61,14 +61,25 @@ export class AuthService {
 
   async updateUserFromDb(id: string, updateUserDto: UpdateUserDto) {
 
-    const product = await this.userRepository.preload({
+    const user = await this.userRepository.preload({
       id: id,
+      password: bcrypt.hashSync(updateUserDto.password, 10),
       ...updateUserDto
     });
 
     try {
 
-      return await this.userRepository.save(product);
+      await this.userRepository.save(user);
+
+      delete user.password;
+
+      const newUser = {
+        ...user,
+        token: this.getJwtToken({ id: user.id })
+      }
+
+
+      return newUser;
 
     } catch (error) {
       throw new NotFoundException('User not found')
