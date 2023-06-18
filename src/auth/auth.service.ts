@@ -1,12 +1,16 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from "bcrypt";
+import { validate as isValidTerm } from 'uuid';
+
 
 import { User } from './entities/user.entity';
-import { CreateUserDto, LoginUserDto } from './dto/';
+import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto/';
 import { JwtPayload } from './interfaces/jwt-payload-interface';
 import { JwtService } from '@nestjs/jwt';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
+
 
 
 @Injectable()
@@ -18,6 +22,60 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
     private jwtService:JwtService
   ) { }
+
+
+  async findAllUsersFromDb(paginationDto: PaginationDto) {
+
+    const { limit = 10, offset = 0 } = paginationDto;
+
+    const usersLists = await this.userRepository.find(
+      {
+        take: limit,
+        skip: offset
+      }
+    );
+    return usersLists;
+  }
+
+  async findOneUserFromDb(termToSearchFor: string) {
+
+    let user: User;
+
+    if (isValidTerm(termToSearchFor)) {
+      user = await this.userRepository.findOneBy({ id: termToSearchFor });
+    } else {
+      const queryBuilder = this.userRepository.createQueryBuilder();
+      user = await queryBuilder
+        .where(
+          'UPPER(fullname) =:fullname',
+          { fullname: termToSearchFor.toUpperCase() }).getOne();
+    }
+
+    if (!user) {
+      throw new NotFoundException(`User ${termToSearchFor} not found`);
+    }
+
+    return user;
+  }
+
+
+  async updateUserFromDb(id: string, updateUserDto: UpdateUserDto) {
+
+    const product = await this.userRepository.preload({
+      id: id,
+      ...updateUserDto
+    });
+
+    try {
+
+      return await this.userRepository.save(product);
+
+    } catch (error) {
+      throw new NotFoundException('User not found')
+    }
+
+  }
+ 
 
 
    async createUserInDb(createUserDto: CreateUserDto) {
@@ -88,3 +146,5 @@ export class AuthService {
 
  
 }
+
+
