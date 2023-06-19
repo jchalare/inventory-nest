@@ -79,7 +79,7 @@ export class CompaniesService {
       return await this.companyRepository.save(company);
 
     } catch (error) {
-      throw new NotFoundException('Company not found')
+      throw new NotFoundException(error);
     }
   }
 
