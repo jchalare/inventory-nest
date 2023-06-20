@@ -18,7 +18,7 @@ export class Product {
     @Column('text', {nullable: false})
     description: string;
 
-    @Column('text')
+    @Column('text', { nullable: true })
     image_url: string;
 
     @OneToMany(() => Inventory,(inventory) => inventory.product, {cascade:true})

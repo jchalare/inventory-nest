@@ -58,4 +58,23 @@ export class SeedService {
   }
 
 
+  private async insertNewUsers() {
+    await this.companiesService.deleteAllCompaniesFromDb();
+
+    const companies = initialCompanyData.companies;
+
+    const insertPromises = [];
+
+    companies.forEach(company => {
+      insertPromises.push(this.companiesService.createCompanyInDb(company));
+    });
+
+    await Promise.all(insertPromises);
+
+
+    return true;
+  }
+
+
+
 }

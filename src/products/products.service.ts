@@ -27,7 +27,7 @@ export class ProductsService {
       return product;
     } catch (error) {
      
-      throw new InternalServerErrorException('Internal Server Error!');
+      throw new InternalServerErrorException(error);
     }
 
   }
@@ -79,7 +79,7 @@ export class ProductsService {
     return await this.productRepository.save(product);
       
     } catch (error) {
-      throw new NotFoundException('Product not found')
+      throw new NotFoundException(error)
     }
 
   }
