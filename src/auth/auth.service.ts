@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from "bcrypt";
@@ -152,6 +152,22 @@ export class AuthService {
 
     return token;
     
+  }
+
+
+  async deleteAllUsersFromDb() {
+    const query = this.userRepository.createQueryBuilder('user');
+
+    try {
+      return await query
+        .delete()
+        .where({})
+        .execute();
+
+    } catch (error) {
+      throw new BadRequestException(error.detail);
+    }
+
   }
 
  

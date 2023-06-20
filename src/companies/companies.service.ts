@@ -89,7 +89,7 @@ export class CompaniesService {
   }
 
 
-
+ 
 
   async deleteAllCompaniesFromDb() {
     const query = this.companyRepository.createQueryBuilder('company');

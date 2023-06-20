@@ -45,5 +45,5 @@ export class AuthController {
     return this.authService.updateUserFromDb(id, updateUserDto);
   }
 
-
+ 
 }

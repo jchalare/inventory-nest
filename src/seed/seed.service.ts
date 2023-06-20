@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { ProductsService } from './../products/products.service';
-import { CompaniesService } from 'src/companies/companies.service';
-import { initialProductData,initialCompanyData } from './data/';
+import { CompaniesService } from './../companies/companies.service';
+import { initialProductData,initialCompanyData, initialUserData } from './data/';
+import { AuthService } from 'src/auth/auth.service';
 
 
 @Injectable()
@@ -10,7 +11,8 @@ export class SeedService {
 
   constructor(
     private readonly companiesService: CompaniesService,
-    private readonly productsService: ProductsService
+    private readonly productsService: ProductsService,
+    private readonly usersService: AuthService
   ) { }
 
 
@@ -18,6 +20,7 @@ export class SeedService {
 
     await this.insertNewProducts();
     await this.insertNewCompanies();
+    await this.insertNewUsers();
 
     return 'SEED EXECUTED';
   }
@@ -59,14 +62,14 @@ export class SeedService {
 
 
   private async insertNewUsers() {
-    await this.companiesService.deleteAllCompaniesFromDb();
+    await this.usersService.deleteAllUsersFromDb();
 
-    const companies = initialCompanyData.companies;
+    const users = initialUserData.users;
 
     const insertPromises = [];
 
-    companies.forEach(company => {
-      insertPromises.push(this.companiesService.createCompanyInDb(company));
+    users.forEach(user => {
+      insertPromises.push(this.usersService.createUserInDb(user));
     });
 
     await Promise.all(insertPromises);
