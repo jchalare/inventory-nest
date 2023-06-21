@@ -4,14 +4,11 @@
   "description": "",
   "author": "",
   "private": true,
-  "homepage":"http://jchalare.github.io/inventory-react",
   "license": "UNLICENSED",
   "engines": {
     "node": "16.x"
   },
   "scripts": {
-    "predeploy":"yarn build",
-    "deploy":"gh-pages -d build",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/main",
