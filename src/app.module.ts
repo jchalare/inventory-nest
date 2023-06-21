@@ -14,7 +14,14 @@ import { AuthModule } from './auth/auth.module';
 imports:[
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
+        ssl: process.env.STAGE === 'prod',
+        extra:{
+            ssl: process.env.STAGE === 'prod'
+                ? { rejectUnauthorized: false }
+                : null
+        },
         type: 'postgres',
+        url: "postgres://postgres:U8uqSjC7wxcT3sr@inventory-nest.flycast:5432",
         host: process.env.DB_HOST,
         port: +process.env.DB_PORT,
         database: process.env.DB_NAME,
